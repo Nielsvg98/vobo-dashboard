@@ -1,58 +1,104 @@
-import React from 'react';
+import React, { Component } from 'react';
+import Search from "./Search";
+import PrimaryActionButton from './PrimaryActionButton';
 
-const classes = ["B1A", "B1B", "B1C", "H1A", "H1B", "H1C", "H1D", "V1A", "V1B", "V1C"];
-const listItems = classes.map((item) =>
-  <li style={{margin: 12}}>{item}</li>
-);
-
-class SelectClass extends React.Component {
+class Counters extends Component {
     constructor(props) {
         super(props);
-        this.state = { 
-            isActive: false,
-         };
 
-        this.handleClick = this.handleClick.bind(this);
+        this.state = {
+            classes: {
+                1: { id: 1, className: 'BA1', active: false },
+                2: { id: 2, className: 'MA1', active: false },
+                3: { id: 3, className: 'VA2', active: false },
+                4: { id: 4, className: 'DA2', active: false },
+                5: { id: 5, className: 'BB2', active: false },
+                6: { id: 6, className: 'ES3', active: false },
+                7: { id: 7, className: 'SD3', active: false }
+            },
+            activebutton: 'false',
+            showPopup: 'true'
+        };
     }
 
-    handleClick() {
+    setActiveButton() {
         this.setState(state => ({
-            isActive: !state.isActive
-
+            activebutton: !state.activebutton
         }));
     }
 
+    selectClass = (classId) => {
+        this.setState({
+            classes: { ...this.state.classes, [classId]: true },
+        })
+    };
+
+    showPopup() {
+        alert('close popup');
+    }
+
     render() {
+        const klassen = Object.values(this.state.classes);
+        const active = Object.entries(this.state.classes).filter(f => f[1] === true);
+        const count = active.length;
+
         return (
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: 48 }}>
-                <div style={{borderRadius: 10, backgroundColor:'grey', width: 722, height: 700 }}>
-                    <h1 style={{ margin: 24, color: 'black' }}>Welkom.</h1>
-                    <p style={{ marginLeft: 24, width: '50%' }}>Selecteer alle klassen die voor jou relevant zijn.
-                Deze kun je altijd nog wijzigen.</p>
+            <div style={main}>
+                <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+                    <button onClick={this.showPopup}>X</button>
+                </div>
+                <div>
+                    <h1>Welkom.</h1>
+                    <p>Selecteer alle klassen die voor jou relevant zijn. Deze kun je altijd nog wijzigen.</p>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <p>{count === 1 ? count + ' klas' : count + ' klassen'} geselecteerd</p>
+                </div>
 
-                    <div style={{ display: 'flex', margin: 24 }}>
-                        <div style={{ width: 250, height: 50, backgroundColor: 'white' }}>
-                            <input style={{width: '100%', height: '100%'}} type="text" name="name" placeholder="Zoek klas" />
-                        </div>
-
-                        <div>
-                            <p style={{ marginLeft: 24 }}>0 klassen geselecteerd</p>
-                        </div>
-                    </div>
-
-                    <div style={{ display: 'flex', margin: 24 }}>
-                        <div style={{ width: 250, height: 450, backgroundColor: 'white', marginRight: 12 }}>
-                            <ul onClick={this.handleClick} style={{color: this.state.isActive ? 'blue' : 'black', listStyleType: 'none'}}>{listItems}</ul>
-                        </div>
-
-                        <div style={{ width: 400, height: 450, backgroundColor: 'white', marginLeft: 12 }}>
-
-                        </div>
+                <div style={classStyling}>
+                    <Search classes={this.state.classes} key={klassen.id} addToList={this.selectClass} value={klassen.className}></Search>
+                    <div style={right}>
+                        <ul style={{ paddingLeft: 12 }}>
+                            {active.map(cls =>
+                                <li style={{ listStyleType: 'none', marginTop: 12 }}>{cls}</li>
+                            )}
+                        </ul>
                     </div>
                 </div>
+                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <PrimaryActionButton activebutton={count > 0 ? true : false}>Opslaan</PrimaryActionButton>
+                </div>
+
             </div>
-        );
+        )
     }
 }
 
-export default SelectClass;
+
+const main = {
+    width: '40%',
+    marginLeft: '30%',
+    marginRight: '30%',
+    marginTop: '5%',
+    padding: 24,
+    backgroundColor: 'white',
+    border: '1px solid #e1e1e1',
+    borderRadius: 5,
+}
+
+const classStyling = {
+    display: 'flex',
+    marginTop: 24,
+}
+
+const right = {
+    width: '47.5%',
+    marginLeft: '2.5%',
+    border: '1px solid #e1e1e1',
+    borderRadius: 5,
+    marginTop: 48,
+}
+
+
+
+export default Counters;
